@@ -1,0 +1,53 @@
+root@ip-172-31-33-146:~/myterraformfiles# cat aws_infra.tf
+provider "aws" {
+  region = var.region
+}
+
+data "aws_ami" "myami" {
+  owners      = ["amazon"]
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
+resource "aws_instance" "myec2" {
+
+  ami           = data.aws_ami.myami.id
+  instance_type = var.instance_type
+
+  tags = {
+    Name = var.env
+  }
+   count         = 5
+}
+======================================================================================================
+root@ip-172-31-33-146:~/myterraformfiles# cat variable.tf
+variable "region" {
+  type    = string
+  default = "us-east-1"
+}
+
+variable "instance_type" {
+  type    = string
+  default = "c7i-flex.large"
+}
+
+variable "env" {
+  type    = string
+  default = "Dev"
+}
+root@ip-172-31-33-146:~/myterraformfiles#
+
