@@ -1,0 +1,63 @@
+✅ What is a .tfvars file?
+
+A .tfvars file is used to assign values to variables defined in variables.tf.
+
+Instead of hardcoding defaults inside the variable block, you define variables and pass values using:
+
+terraform.tfvars
+
+
+or
+
+something.tfvars
+
+
+This is very useful for:
+
+Dev
+
+Test
+
+Prod
+
+Different regions
+
+Different instance sizes
+
+📌 Basic Example
+1️⃣ variables.tf
+variable "region" {
+  type = string
+}
+
+variable "instance_type" {
+  type = string
+}
+
+variable "instance_count" {
+  type = number
+}
+
+2️⃣ terraform.tfvars
+region         = "us-east-1"
+instance_type  = "t3.micro"
+instance_count = 2
+
+3️⃣ main.tf
+provider "aws" {
+  region = var.region
+}
+
+resource "aws_instance" "myec2" {
+  ami           = "ami-12345678"
+  instance_type = var.instance_type
+  count         = var.instance_count
+}
+
+
+Now just run:
+
+terraform plan
+
+
+Terraform automatically loads terraform.tfvars.
